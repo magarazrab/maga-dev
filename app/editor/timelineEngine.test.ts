@@ -1,0 +1,12 @@
+import { strict as assert } from 'node:assert';
+import { createProject, addClip, splitClip, trimClip } from './timelineEngine';
+const project = createProject('user');
+const track = project.tracks[0].id;
+const withClip = addClip(project, track, { kind: 'video', uri: 'file:///clip.mp4', startMs: 0, durationMs: 10_000, sourceInMs: 0, speed: 1, volume: 1, opacity: 1, rotation: 0, scale: 1, x: 0, y: 0 });
+const clipId = withClip.tracks[0].clips[0].id;
+const split = splitClip(withClip, clipId, 4_000);
+assert.equal(split.tracks[0].clips.length, 2);
+assert.equal(split.tracks[0].clips[0].durationMs, 4_000);
+const trimmed = trimClip(split, clipId, 500, 2_000);
+assert.equal(trimmed.tracks[0].clips[0].sourceInMs, 500);
+console.log('timeline engine ok');
